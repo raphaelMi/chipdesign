@@ -14,7 +14,7 @@ Coordinate dijkstra_steiner(std::vector<Terminal> const& terminals);
 //for each (v,I) save (l(v,I), lb(v,T\I), v , I)
 using Length_vI = std::tuple<Coordinate, Coordinate, Terminal, std::bitset<MAX_NUM_TERMINALS>>;
 
-// To compare lengths 
+// To compare lengths of tuples in our heap
 class lengthComparator 
 { 
   public: 
@@ -28,9 +28,6 @@ class lengthComparator
       return (l1 > l2); 
     } 
 }; 
-
-
-
 
 using LengthHeap = std::vector<Length_vI>;
 
