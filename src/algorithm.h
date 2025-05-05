@@ -11,29 +11,27 @@ namespace Algorithm {
 Coordinate dijkstra_steiner(std::vector<Terminal> const& terminals);
 }
 
-using Length_vI = std::tuple<Coordinate, Terminal, std::bitset<MAX_NUM_TERMINALS>>;
+//for each (v,I) save (l(v,I), lb(v,T\I), v , I)
+using Length_vI = std::tuple<Coordinate, Coordinate, Terminal, std::bitset<MAX_NUM_TERMINALS>>;
 
 // To compare lengths 
 class lengthComparator 
 { 
   public: 
-    bool operator() (const Length_vI& vs1, 
-      const Length_vI& vs2) 
+    bool operator() (Length_vI const& vs1, 
+      Length_vI const& vs2) 
     { 
-      Coordinate l1 = std::get<0>(vs1);
-      Coordinate l2 = std::get<0>(vs2);
+      //compare l(v,I)+lb(v,T\I)
+      Coordinate l1 = std::get<0>(vs1)+std::get<1>(vs1);
+      Coordinate l2 = std::get<0>(vs2)+std::get<1>(vs2);
 
-      
-      if (l1 < 0) return false;  //if first value is infinite
-      if (l2 < 0) return true;   //if second value is infinite
-      return (l1 < l2); 
+      return (l1 > l2); 
     } 
 }; 
 
 
 
 
-using LengthHeap = std::priority_queue<Length_vI, 
-std::vector<Length_vI>, lengthComparator>;
+using LengthHeap = std::vector<Length_vI>;
 
 #endif /*ALGORITHM_H */
