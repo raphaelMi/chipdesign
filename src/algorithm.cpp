@@ -12,15 +12,6 @@ namespace Algorithm {
     return &lhs == &rhs; // Compare memory addresses
   }
   
-  // bool vIinP(Length_vI vI1, std::vector<Length_vI> p)
-  // {
-  //   for(const auto& vI2 : p)
-  //   {
-  //     if (vI1 == vI2) return true;
-  //   }
-  //   return false;
-  // }
-  
   //returns minimum and maximum x and y coords.
   std::vector<Coordinate> calculateExtremes(std::vector<Terminal> const& vertices)
   { 
