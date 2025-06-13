@@ -2,10 +2,12 @@
 #include <iostream>
 #include <span>
 #include "parser.h"
+#include "parser.cpp"
+#include "algorithm.cpp"
 #include "algorithm.h"
 #include "common.h"
 
-void print_usage(std::span<char const*> args)
+void print_usage(std::span<const char*> args)
 {
   std::cout << "Calculates the length of a minimum Steiner Tree for the given "
                "instance file."

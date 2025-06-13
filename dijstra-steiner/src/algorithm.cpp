@@ -38,7 +38,7 @@ namespace Algorithm {
   {
     //transform terminalSet to vertex set
     std::vector<Terminal> terminalList;
-    for(ulong i=0; i< allTerminals.size(); i++)
+    for(std::size_t i=0; i< allTerminals.size(); i++)
     {
       if(!terminalSet.test(i)) terminalList.push_back(allTerminals[i]);
     }
@@ -144,7 +144,7 @@ namespace Algorithm {
         Coordinate oldCost = std::get<0>(vertexTerminals);
         
         if((v.x == w.x) && (v.y == w.y)) {                      //if v = w we can try to apply step 7
-          for(ulong i = 0; i < list_vJ.size(); i++)
+          for(std::size_t i = 0; i < list_vJ.size(); i++)
           {
             Length_vI vJ = list_vJ[i];
             if((std::get<3>(vJ) | terminalSet) == terminalsIJ) {  //try to match terminal sets to I u J
@@ -194,7 +194,7 @@ namespace Algorithm {
         std::bitset<MAX_NUM_TERMINALS>& terminalsIJ = std::get<3>(vertexTerminals);
         
         if((v.x == w.x) && (v.y == w.y)) {                      //if v = w we can try to apply step 7
-          for(ulong i = 0; i < list_vJ.size(); i++)
+          for(std::size_t i = 0; i < list_vJ.size(); i++)
           {
             Length_vI vJ = list_vJ[i];
             if((std::get<3>(vJ) | terminalSet) == terminalsIJ) {  //try to match terminal sets to I u J
@@ -265,7 +265,7 @@ namespace Algorithm {
         std::push_heap(length_heap.begin(), length_heap.end(), lengthComparator());
       }
       
-      for(ulong i = 0; i < list_vJ.size(); i++)
+      for(std::size_t i = 0; i < list_vJ.size(); i++)
       {
         if(used_vJ[i]) continue;
         std::bitset<MAX_NUM_TERMINALS> s = terminalSet | std::get<3>(list_vJ[i]);
