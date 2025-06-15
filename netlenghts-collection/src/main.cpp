@@ -2,10 +2,11 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include "common.h"
 #include "algorithms.cpp"
 
 int main() {
-    std::vector<std::pair<int, int>> coordinates;
+    std::vector<Coordinate> coordinates;
 
     //TODO: fix reading from input pipe
     //when is the input pipe done? Maybe when std::ends is written?
@@ -48,7 +49,8 @@ int main() {
     std::cout << clique(x_coordinates, y_coordinates) << std::endl;
     std::cout << star(x_coordinates, y_coordinates) << std::endl;
     std::cout << mst(x_coordinates, y_coordinates) << std::endl;
-    //std::cout << steiner_approx(coordinates) << std::endl;
+    //std::cout << mst_alt(coordinates) << std::endl;
+    std::cout << steiner_approx(coordinates) << std::endl;
 
     
     
