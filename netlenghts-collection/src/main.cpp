@@ -44,12 +44,13 @@ int main() {
     }
 
     std::cout << boundingBox(coordinates) << std::endl;
-    std::cout << clique_slow(coordinates) << std::endl;
+    //std::cout << clique_slow(coordinates) << std::endl;
     std::cout << clique(x_coordinates, y_coordinates) << std::endl;
     std::cout << star(x_coordinates, y_coordinates) << std::endl;
     std::cout << mst(x_coordinates, y_coordinates) << std::endl;
     //std::cout << steiner_approx(coordinates) << std::endl;
 
+    
     
     return 0;
 }

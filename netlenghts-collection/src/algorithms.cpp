@@ -25,7 +25,7 @@ int boundingBox(const std::vector<std::pair<int, int>>& coords) {
     return maxX - minX + maxY - minY;
 }
 
-// Computes the clique netlength in O(n^2) time
+// Computes the clique netlength in O(n^2) time (kept just for comparison)
 double clique_slow(const std::vector<std::pair<int, int>>& coords) {
     if (coords.empty()) return 0;
 
@@ -58,7 +58,7 @@ double clique(const std::vector<int>& x_coords, const std::vector<int>& y_coords
     std::sort(sorted_x.begin(), sorted_x.end()); //O(n log n)
     std::sort(sorted_y.begin(), sorted_y.end());
 
-    for (std::size_t i = 1; i < size; i++)
+    for (std::size_t i = 1; i < size; ++i)
     {
         // Calculate distances of segments, 
         // then multiply by points on the left and points on the right.
@@ -75,7 +75,7 @@ int star(const std::vector<int>& x_coords, const std::vector<int>& y_coords) {
     if (x_coords.empty() or y_coords.empty()) return 0;
     // Calculates the l1 distance to the median of x and y coordinates
 
-    //find median of x and y, O(n log n) without median of medians
+    // Find median of x and y, O(n log n) without median of medians
     std::vector<int> sorted_x = x_coords;
     std::vector<int> sorted_y = y_coords;
     std::sort(sorted_x.begin(), sorted_x.end()); //O(n log n) operation
@@ -83,7 +83,7 @@ int star(const std::vector<int>& x_coords, const std::vector<int>& y_coords) {
     int median_x = sorted_x[sorted_x.size() / 2];
     int median_y = sorted_y[sorted_y.size() / 2];
 
-    //calculate the sum of distances to the median in linear time
+    // Calculate the sum of distances to the median in linear time
     int total_distance = 0;
     for (size_t i = 0; i < x_coords.size(); ++i) {
         total_distance += std::abs(x_coords[i] - median_x) + std::abs(y_coords[i] - median_y);
@@ -95,20 +95,55 @@ int star(const std::vector<int>& x_coords, const std::vector<int>& y_coords) {
 int mst(const std::vector<int>& x_coords, const std::vector<int>& y_coords) {
     if (x_coords.empty() or y_coords.empty()) return 0;
 
-    //use prim's algorithm to find the minimum spanning tree
+    // Use something based on prim's algorithm to find the minimum spanning tree
     
-    return -1;
+    size_t size = x_coords.size();
+    std::vector<int> weights(size, std::numeric_limits<int>::max());
+    std::vector<bool> in_tree(size, false);
+
+    int total_length = 0;
+    size_t min_index = 0;
+
+    // Two nested loops, both ranging over the set of vertices, so O(n^2) runtime
+    for (size_t i = 0; i < size - 1; ++i) {
+        
+        in_tree[min_index] = true;
+        
+        // Reduce weights and find the vertex with the smallest distance
+        int next_min_weight = std::numeric_limits<int>::max();
+        size_t next_min_index = 0;
+
+        for (size_t j = 1; j < size; ++j) {
+            if (in_tree[j]) continue;
+
+            // Reduce weights
+            int weight = abs(x_coords[j] - x_coords[min_index]) + abs(y_coords[j] - y_coords[min_index]);
+            if(weights[j] > weight) weights[j] = weight;
+            
+            // Select as next min
+            if (weights[j] < next_min_weight) {
+                next_min_weight = weights[j];
+                next_min_index = j;
+            }
+        }
+
+        min_index = next_min_index;
+        total_length += next_min_weight;
+
+    }
+    
+    return total_length;
 
 }
 
 // Computes an approximate for the minimal steiner tree length in O(n^3) time
-int steiner_approx(const std::vector<std::pair<int, int>> coordinates) {
+int steiner_approx(const std::vector<std::pair<int, int>>& coordinates) {
     if (coordinates.empty()) return 0;
 
     std::list<std::pair<int, int>> terminals(coordinates.begin(), coordinates.end()); //convert vector to list
     std::list<std::pair<int, int>> graph_vertices;
     std::list<std::pair<size_t,size_t>> graph_edges; //incidence matrix for edges
-    std::pair<int, int> t = terminals.back();
+    //std::pair<int, int> t = terminals.back();
     terminals.pop_back();
 
     while(not terminals.empty()) {
@@ -131,7 +166,7 @@ int steiner_approx(const std::vector<std::pair<int, int>> coordinates) {
             std::pair<int, int> v;
             //find edge {u,w} in graph which minimizes dist(s,shortest path area(u,w))
             
-            graph_edges.erase(e); //same as before
+            //graph_edges.erase(e); //same as before
             graph_vertices.emplace_back(s);
             graph_vertices.emplace_back(v);
             graph_edges.emplace_back(std::pair{/*u,v*/ 0,1}); //TODO add logic
@@ -141,7 +176,7 @@ int steiner_approx(const std::vector<std::pair<int, int>> coordinates) {
         }
 
     }
-    int total_distance = 0;
+    //int total_distance = 0;
     //TODO add distances for all graph edges
     
     return -1;
