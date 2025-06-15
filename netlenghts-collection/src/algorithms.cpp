@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <limits>
 #include <vector>
+#include <list>
 
 
 // Computes BB for the given coordinates in O(n) time
@@ -94,14 +95,54 @@ int star(const std::vector<int>& x_coords, const std::vector<int>& y_coords) {
 int mst(const std::vector<int>& x_coords, const std::vector<int>& y_coords) {
     if (x_coords.empty() or y_coords.empty()) return 0;
 
-    //TODO
+    //use prim's algorithm to find the minimum spanning tree
+    
     return -1;
+
 }
 
 // Computes an approximate for the minimal steiner tree length in O(n^3) time
-int steiner_approx(const std::vector<int>& x_coords, const std::vector<int>& y_coords) {
-    if (x_coords.empty() or y_coords.empty()) return 0;
+int steiner_approx(const std::vector<std::pair<int, int>> coordinates) {
+    if (coordinates.empty()) return 0;
 
-    //TODO
+    std::list<std::pair<int, int>> terminals(coordinates.begin(), coordinates.end()); //convert vector to list
+    std::list<std::pair<int, int>> graph_vertices;
+    std::list<std::pair<size_t,size_t>> graph_edges; //incidence matrix for edges
+    std::pair<int, int> t = terminals.back();
+    terminals.pop_back();
+
+    while(not terminals.empty()) {
+        //find closest coord in coordinates to the graph
+        std::pair<int, int> s;
+        for (size_t i = 0; i < terminals.size(); i++) {
+            break; //TODO
+        }
+        auto it = std::find(terminals.begin(), terminals.end(), s);
+        if (it != terminals.end()) {
+            terminals.erase(it);
+        }
+
+        if(graph_edges.empty()) {
+            //add s to the graph along with the single edge
+            graph_vertices.emplace_back(s);
+            graph_edges.emplace_back(std::pair{0, 1});
+        } else {
+            std::pair<size_t, size_t> e;
+            std::pair<int, int> v;
+            //find edge {u,w} in graph which minimizes dist(s,shortest path area(u,w))
+            
+            graph_edges.erase(e); //same as before
+            graph_vertices.emplace_back(s);
+            graph_vertices.emplace_back(v);
+            graph_edges.emplace_back(std::pair{/*u,v*/ 0,1}); //TODO add logic
+            graph_edges.emplace_back(std::pair{/*v,w*/ 0,1});
+            graph_edges.emplace_back(std::pair{/*v,s*/ 0,1});
+
+        }
+
+    }
+    int total_distance = 0;
+    //TODO add distances for all graph edges
+    
     return -1;
 }

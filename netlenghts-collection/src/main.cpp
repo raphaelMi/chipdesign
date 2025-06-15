@@ -8,6 +8,7 @@ int main() {
     std::vector<std::pair<int, int>> coordinates;
 
     //TODO: fix reading from input pipe
+    //when is the input pipe done? Maybe when std::ends is written?
     /*
     std::string line;
     while (std::getline(std::cin, line)) {
@@ -22,22 +23,32 @@ int main() {
     }
     */
     // Example coordinates for testing
+
+
     coordinates.emplace_back(1, 2);
     coordinates.emplace_back(3, 4);
     coordinates.emplace_back(5, 6);
     coordinates.emplace_back(0, 3);
     coordinates.emplace_back(5, 2);
     coordinates.emplace_back(2, 1);
+    coordinates.emplace_back(10, 0);
 
-    std::vector<int> x_coordinates = {1, 3, 5, 0, 5, 2};
-    std::vector<int> y_coordinates = {2, 4, 6, 3, 2, 1};
+
+    std::vector<int> x_coordinates;
+    std::vector<int> y_coordinates;
+
+    for (auto &c : coordinates)
+    {
+        x_coordinates.emplace_back(c.first);
+        y_coordinates.emplace_back(c.second);
+    }
 
     std::cout << boundingBox(coordinates) << std::endl;
     std::cout << clique_slow(coordinates) << std::endl;
     std::cout << clique(x_coordinates, y_coordinates) << std::endl;
     std::cout << star(x_coordinates, y_coordinates) << std::endl;
     std::cout << mst(x_coordinates, y_coordinates) << std::endl;
-    std::cout << steiner_approx(x_coordinates, y_coordinates) << std::endl;
+    //std::cout << steiner_approx(coordinates) << std::endl;
 
     
     return 0;
