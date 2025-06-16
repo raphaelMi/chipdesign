@@ -32,7 +32,7 @@ double clique_slow(const std::vector<Coordinate>& coords) {
     if (coords.empty()) return 0;
 
     // Calculate the clique netlength 
-    int total_length = 0;
+    long total_length = 0;
     for (size_t i = 0; i < coords.size(); ++i) { //runtime O(n^2)
         for (size_t j = i + 1; j < coords.size(); ++j) {
             int dx = coords[i].first - coords[j].first;
@@ -53,7 +53,7 @@ double clique(const std::vector<int>& x_coords, const std::vector<int>& y_coords
     std::size_t size = x_coords.size();
 
     // Calculate the clique netlength 
-    int total_length = 0;
+    long total_length = 0;
 
     std::vector<int> sorted_x = x_coords;
     std::vector<int> sorted_y = y_coords;
