@@ -5,6 +5,7 @@
 #include <vector>
 #include <list>
 #include "common.h"
+// #include <iostream>
 
 
 // Computes BB for the given coordinates in O(n) time
@@ -193,23 +194,17 @@ int mst(const std::vector<Coordinate>& coords) { // Turned out to be faster than
 
 // Computes an approximate for the minimal steiner tree length in O(n^3) time
 int steiner_approx(const std::vector<Coordinate>& coordinates) {
-    if (coordinates.empty()) return 0;
+    if (coordinates.size() < 2) return 0;
 
-    std::list<Coordinate> terminals(coordinates.begin()++, coordinates.end()); //convert vector to list
-    std::list<Coordinate> graph_vertices;
+    //std::list<Coordinate> graph_vertices; //actually not needed, we only need the edges
     std::list<Edge> graph_edges;
-    std::pair<int, int> t = *coordinates.begin();
+    //graph_vertices.emplace_back(coordinates[0]); 
+    //graph_vertices.emplace_back(coordinates[1]); 
+    graph_edges.emplace_back(coordinates[0], coordinates[1]); // Add the first edge to the graph
+    
+    std::list<Coordinate> terminals(++++coordinates.begin(), coordinates.end()); //convert vector to list
 
     while(not terminals.empty()) { // n iterations
-
-        if(graph_edges.empty()) {
-            // Add s to the graph along with the single edge
-            Coordinate s = *terminals.begin();
-            terminals.erase(terminals.begin());
-            graph_vertices.emplace_back(s);
-            graph_edges.emplace_back(s,t);
-            continue;
-        }
 
         // Find closest coord in coordinates to the graph
         Coordinate s;
@@ -218,10 +213,13 @@ int steiner_approx(const std::vector<Coordinate>& coordinates) {
         auto uw_it = graph_edges.end();
         int min_dist = std::numeric_limits<int>::max();
 
+        // Find edge e={u,w} in graph which minimizes dist(s,shortest path area(u,w))
         // Traverse list like this to get an iterator to the edge with the minimum distance    
         // The outer loop has n iterations, inner loop has O(n) iterations since in every step of the while loop
         // only add three edges and remove one edge, so at most 2n edges in the graph -> O(n^2) runtime in total
         for (auto it = terminals.begin(); it != terminals.end(); ++it) {
+
+            Coordinate c = *it;
             for(auto e_it = graph_edges.begin(); e_it != graph_edges.end(); ++e_it) {
 
                 Edge e = *e_it;
@@ -232,39 +230,37 @@ int steiner_approx(const std::vector<Coordinate>& coordinates) {
                 int dist_to_edge = 0;
 
                 // x-coordinate distance
-                if (s.first < u.first && s.first < w.first) { // left of the edge
-                    dist_to_edge = std::abs(s.first - u.first);
+                if (c.first < u.first && c.first < w.first) { // left of the edge
+                    dist_to_edge = std::abs(c.first - std::min(u.first, w.first));
                 } 
-                else if (s.first > u.first && s.first > w.first) { // right of the edge
-                    dist_to_edge = std::abs(s.first - w.first);
+                else if (c.first > u.first && c.first > w.first) { // right of the edge
+                    dist_to_edge = std::abs(c.first - std::max(u.first, w.first));
                 }
                 else {
                     dist_to_edge = 0; // s is in the middle of the edge
                 }
                 // y-coordinate distance
-                if (s.second < u.second && s.second < w.second) { // below the edge
-                    dist_to_edge += std::abs(s.second - u.second);
+                if (c.second < u.second && c.second < w.second) { // below the edge
+                    dist_to_edge += std::abs(c.second - std::min(u.second, w.second));
                 }
-                else if (s.second > u.second && s.second > w.second) { // above the edge
-                    dist_to_edge += std::abs(s.second - w.second);
+                else if (c.second > u.second && c.second > w.second) { // above the edge
+                    dist_to_edge += std::abs(c.second - std::max(u.second, w.second));
                 }
                 else {
                     dist_to_edge += 0; // s is in the middle of the edge
                 }
 
-                if(dist_to_edge < min_dist) {
+                if(dist_to_edge < min_dist) { // Update iterators if min is found
                     min_dist = dist_to_edge;
+                    s = c;
+                    s_it = it;
                     uw = e;
                     uw_it = e_it;
-                    s_it = it;
-                    s = *s_it;  
                 }
             }
         }
-        s = *s_it;
         terminals.erase(s_it); // remove the terminal from the list
 
-        // find edge e={u,w} in graph which minimizes dist(s,shortest path area(u,w))
 
         Edge e = *uw_it;
         Coordinate u = e.first;
@@ -294,19 +290,20 @@ int steiner_approx(const std::vector<Coordinate>& coordinates) {
             v.second = s.second; // s is in the middle of the edge
         }
 
-        graph_vertices.emplace_back(v);
+        //graph_vertices.emplace_back(v);
         graph_edges.emplace_back(u, v);
         graph_edges.emplace_back(w, v);
         // If s and v differ, add edge (s,v)
         if (s.first != v.first || s.second != v.second) {
-            graph_vertices.emplace_back(s);
+            //graph_vertices.emplace_back(s);
             graph_edges.emplace_back(s, v);
         }
     }
     int total_distance = 0;
-    //TODO add distances for all graph edges
     for (const auto& edge : graph_edges) {
         total_distance += std::abs(edge.first.first - edge.second.first) + std::abs(edge.first.second - edge.second.second);
+        // std::cout << "(" << edge.first.first << ", " << edge.first.second << ") -> ("
+        //          << edge.second.first << ", " << edge.second.second << ")\n";
     }
     return total_distance;
 }

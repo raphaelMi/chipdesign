@@ -7,7 +7,9 @@
 // only for testing purposes
 #include <chrono>
 
-void timing(const std::vector<Coordinate>& coordinates, const std::vector<int>& x_coordinates, const std::vector<int>& y_coordinates, int algorithm) {
+void timing(const std::vector<Coordinate>& coordinates, 
+    const std::vector<int>& x_coordinates, const std::vector<int>& y_coordinates, 
+    int algorithm, int iterations) {
     std::string algorithm_names[] = {
         "Bounding Box",
         "Clique O(n log n)",
@@ -19,7 +21,7 @@ void timing(const std::vector<Coordinate>& coordinates, const std::vector<int>& 
     };
 
     auto start = std::chrono::high_resolution_clock::now();
-    for(int i = 0; i < 10000; ++i) {
+    for(int i = 0; i < iterations; ++i) {
         switch (algorithm) {
         case 0: // Bounding Box
             boundingBox(coordinates);
@@ -52,11 +54,53 @@ void timing(const std::vector<Coordinate>& coordinates, const std::vector<int>& 
     std::cout << "Elapsed time for algorithm " << algorithm_names[algorithm] << ": " << elapsed.count() << " seconds" << std::endl;
 }
 
-int main() {
+int main(int argc, char* argv[]) {
+    bool read_from_input = true; // Default value
+    int size = 50; // Default number of coordinates
+    int range = 50; // Default range for random coordinates
+    bool timing_enabled = false; // Default value for timing
+    int iterations; // Number of iterations for timing
+    long seed = time(0); // Default seed for random number generation
+
+    // Parse command-line arguments
+    for (int i = 1; i < argc; ++i) {
+        std::string arg = argv[i];
+        if (arg == "--no_input") {
+            read_from_input = false;
+        } else if (arg == "--size" && i + 1 < argc) {
+            size = std::stoi(argv[++i]);
+        } else if (arg == "--range" && i + 1 < argc) {
+            range = std::stoi(argv[++i]);
+        } else if (arg == "--seed") {
+            seed = (std::stol(argv[++i]));
+        } else if (arg == "--timing") {
+            timing_enabled = true;
+            if (i + 1 < argc) {
+                try {
+                    iterations = std::stoi(argv[i+1]);
+                    ++i;
+                } catch(const std::exception& e) { iterations = 10000; }
+                std::cout << "Timing enabled with " << iterations << " iterations." << std::endl;
+            }
+        } else if (arg == "--help" || arg == "-h") {
+            std::cout << "Usage: " << argv[0] << " [options]\n"
+                      << "Options:\n"
+                      << "  --no_input       Generate coordinates instead of reading from input\n"
+                      << "  --size <n>       Number of coordinates to generate (default: 50)\n"
+                      << "  --range <r>      Range for random coordinates (default: 50)\n"
+                      << "  --seed <s>       Seed for random generation\n"
+                      << "  --timing [m]     Enable timing analysis with m (optional) iterations\n"
+                      << "  --help, -h       Show this help message\n";
+            return 0;
+        } else {
+            std::cerr << "Unknown argument: " << arg << std::endl;
+            return 1;
+        }
+    }
+
     std::vector<Coordinate> coordinates;
 
-    bool read_from_input = true; // Set to false to use random coordinates for testing
-    if(read_from_input) {
+    if (read_from_input) {
         std::string line;
         while (std::getline(std::cin, line)) {
             std::istringstream iss(line);
@@ -68,13 +112,12 @@ int main() {
             }
         }
     } else {
-        // Example coordinates for testing
-        int size = 50; // Number of coordinates
-        int range = 50; // Range for random coordinates
-        srand(static_cast<unsigned>(time(0)));
+        unsigned s = (unsigned)(seed);
+        srand(s);
         for (int i = 0; i < size; ++i) {
             int x = rand() % range; // Random x-coordinate in range
             int y = rand() % range; // Random y-coordinate in range
+            // std::cout << "Generated coordinate: (" << x << ", " << y << ")" << std::endl;
             coordinates.emplace_back(x, y);
         }
     }
@@ -82,8 +125,7 @@ int main() {
     std::vector<int> x_coordinates;
     std::vector<int> y_coordinates;
 
-    for (auto &c : coordinates)
-    {
+    for (auto &c : coordinates) {
         x_coordinates.emplace_back(c.first);
         y_coordinates.emplace_back(c.second);
     }
@@ -100,18 +142,16 @@ int main() {
 
     std::cout << steiner_approx(coordinates) << std::endl;
 
-    
     // Timing analysis
-    /*
-    timing(coordinates, x_coordinates, y_coordinates, 0); // Bounding Box
-    timing(coordinates, x_coordinates, y_coordinates, 1); // Clique
-    timing(coordinates, x_coordinates, y_coordinates, 2); // Clique Slow
-    timing(coordinates, x_coordinates, y_coordinates, 3); // Star
-    timing(coordinates, x_coordinates, y_coordinates, 4); // MST
-    timing(coordinates, x_coordinates, y_coordinates, 5); // MST Alternative
-    timing(coordinates, x_coordinates, y_coordinates, 6); // Steiner Approximation
-    std::cout << "All algorithms executed successfully." << std::endl;
-    */
+    if(timing_enabled) {
+        timing(coordinates, x_coordinates, y_coordinates, 0, iterations); // Bounding Box
+        timing(coordinates, x_coordinates, y_coordinates, 1, iterations); // Clique
+        timing(coordinates, x_coordinates, y_coordinates, 2, iterations); // Clique Slow
+        timing(coordinates, x_coordinates, y_coordinates, 3, iterations); // Star
+        timing(coordinates, x_coordinates, y_coordinates, 4, iterations); // MST
+        timing(coordinates, x_coordinates, y_coordinates, 5, iterations); // MST Alternative
+        timing(coordinates, x_coordinates, y_coordinates, 6, iterations); // Steiner Approximation
+    }
     return 0;
 }
 
