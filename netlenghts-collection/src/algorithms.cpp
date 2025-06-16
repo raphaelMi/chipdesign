@@ -93,7 +93,7 @@ int star(const std::vector<int>& x_coords, const std::vector<int>& y_coords) {
 }
 
 // Computes the minimum spanning tree length in O(n^2) time
-int mst(const std::vector<int>& x_coords, const std::vector<int>& y_coords) {
+int mst_alt(const std::vector<int>& x_coords, const std::vector<int>& y_coords) { // Kept for comparison
     if (x_coords.empty() or y_coords.empty()) return 0;
 
     // Use something based on prim's algorithm to find the minimum spanning tree
@@ -139,7 +139,7 @@ int mst(const std::vector<int>& x_coords, const std::vector<int>& y_coords) {
 
 
 // Computes the minimum spanning tree length in O(n^2) time, uses lists and deletion instead of vectors
-int mst_alt(const std::vector<Coordinate>& coords) {
+int mst(const std::vector<Coordinate>& coords) { // Turned out to be faster than the previous version
     if (coords.empty()) return 0;
 
     // Use something based on prim's algorithm to find the minimum spanning tree
