@@ -10,13 +10,14 @@
 void timing(const std::vector<Coordinate>& coordinates, const std::vector<int>& x_coordinates, const std::vector<int>& y_coordinates, int algorithm) {
     std::string algorithm_names[] = {
         "Bounding Box",
-        "Clique",
-        "Clique Slow",
+        "Clique O(n log n)",
+        "Clique O(n^2)",
         "Star",
-        "MST",
-        "MST Alternative",
+        "MST (lists and deletion)",
+        "MST alt (vectors)",
         "Steiner Approximation"
     };
+
     auto start = std::chrono::high_resolution_clock::now();
     for(int i = 0; i < 10000; ++i) {
         switch (algorithm) {
@@ -54,30 +55,28 @@ void timing(const std::vector<Coordinate>& coordinates, const std::vector<int>& 
 int main() {
     std::vector<Coordinate> coordinates;
 
-    //TODO: fix reading from input pipe
-    //when is the input pipe done? Maybe when std::ends is written?
-    /*
-    std::string line;
-    while (std::getline(std::cin, line)) {
-        std::istringstream iss(line);
-        int x, y;
-        if (iss >> x >> y) {
-            coordinates.emplace_back(x, y);
-            std::cout << "Read x=" << x << ", y=" << y << std::endl;
-        } else {
-            std::cerr << "Invalid input: " << line << std::endl;
+    bool read_from_input = true; // Set to false to use random coordinates for testing
+    if(read_from_input) {
+        std::string line;
+        while (std::getline(std::cin, line)) {
+            std::istringstream iss(line);
+            int x, y;
+            if (iss >> x >> y) {
+                coordinates.emplace_back(x, y);
+            } else {
+                std::cerr << "Invalid input: " << line << std::endl;
+            }
         }
-    }
-    */
-
-    // Example coordinates for testing
-    int size = 50; // Number of coordinates
-    int range = 50; // Range for random coordinates
-    srand(static_cast<unsigned>(time(0)));
-    for (int i = 0; i < size; ++i) {
-        int x = rand() % range; // Random x-coordinate between 0 and 19
-        int y = rand() % range; // Random y-coordinate between 0 and 19
-        coordinates.emplace_back(x, y);
+    } else {
+        // Example coordinates for testing
+        int size = 50; // Number of coordinates
+        int range = 50; // Range for random coordinates
+        srand(static_cast<unsigned>(time(0)));
+        for (int i = 0; i < size; ++i) {
+            int x = rand() % range; // Random x-coordinate in range
+            int y = rand() % range; // Random y-coordinate in range
+            coordinates.emplace_back(x, y);
+        }
     }
 
     std::vector<int> x_coordinates;
